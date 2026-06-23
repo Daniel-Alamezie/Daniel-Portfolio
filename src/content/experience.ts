@@ -22,7 +22,7 @@ export const experience: Role[] = [
     slug: "rapiscan",
     company: "Rapiscan Systems",
     title: "Software Engineer",
-    period: "Jul 2023 – Aug 2024",
+    period: "Jul 2023 – Jul 2024",
     location: "Stoke-on-Trent",
     tech: ["csharp", "dotnet", "python"],
     bullets: [
@@ -34,7 +34,7 @@ export const experience: Role[] = [
     slug: "theone",
     company: "Theone (Tech Startup)",
     title: "Software Engineer · Contract (part-time, weekends)",
-    period: "Aug 2023 – Jan 2024",
+    period: "Aug 2023 – Feb 2024",
     location: "Remote",
     tech: ["nodejs", "express", "nextjs", "postgresql", "stripe", "githubactions"],
     bullets: [
