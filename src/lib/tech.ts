@@ -63,3 +63,35 @@ export const TECH: Record<TechKey, TechMeta> = {
   semantickernel: { label: "Semantic Kernel", glyph: "SK" },
   socketio: { label: "Socket.io", glyph: "IO" },
 };
+
+/**
+ * Maps a free-text skill label (from src/content/skills.ts) to a tech icon,
+ * where one makes sense. Conceptual skills (DDD, CQRS, OpenLens, …) have no
+ * entry and render as plain chips.
+ */
+const SKILL_ICON: Record<string, TechKey> = {
+  "C# (.NET 10)": "csharp",
+  "Node.js / Express": "nodejs",
+  React: "react",
+  "Next.js": "nextjs",
+  TypeScript: "typescript",
+  "Swift (iOS)": "swift",
+  Python: "python",
+  SQL: "sql",
+  "Anthropic Claude & OpenAI APIs": "anthropic",
+  "Microsoft Semantic Kernel": "semantickernel",
+  Azure: "azure",
+  AWS: "aws",
+  Kubernetes: "kubernetes",
+  "GitHub Actions CI/CD": "githubactions",
+  PostgreSQL: "postgresql",
+  MongoDB: "mongodb",
+  Supabase: "supabase",
+  Stripe: "stripe",
+  Docker: "docker",
+  "REST / GraphQL": "graphql",
+};
+
+export function skillIcon(label: string): TechKey | null {
+  return SKILL_ICON[label] ?? null;
+}

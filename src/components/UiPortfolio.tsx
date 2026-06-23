@@ -6,8 +6,10 @@ import { projects } from "@/content/projects";
 import { experience } from "@/content/experience";
 import { skills, achievements, education } from "@/content/skills";
 import type { Project } from "@/content/types";
-import { TechRow } from "./TechBadge";
+import { TechRow, TechGlyph } from "./TechBadge";
+import { skillIcon } from "@/lib/tech";
 import { useEmail } from "./useEmail";
+import { useSmoothScroll } from "./useSmoothScroll";
 
 const STATUS: Record<Project["status"], { text: string; cls: string }> = {
   live: { text: "live", cls: "text-green border-green/40" },
@@ -58,11 +60,11 @@ function SectionHeading({ n, title }: { n: string; title: string }) {
 function ProjectCard({ p, index }: { p: Project; index: number }) {
   const status = STATUS[p.status];
   return (
+    <div className="reveal h-full" style={{ transitionDelay: `${Math.min(index, 4) * 70}ms` }}>
     <article
-      className={`reveal group flex flex-col rounded-xl border bg-elev/40 p-6 transition-colors hover:border-cyan/40 ${
+      className={`group flex h-full flex-col rounded-xl border bg-elev/40 p-6 transition duration-200 ease-out hover:-translate-y-1 hover:border-cyan/50 hover:shadow-[0_16px_40px_-20px_rgba(0,0,0,0.75)] ${
         p.featured ? "border-green/30" : "border-border"
       }`}
-      style={{ transitionDelay: `${Math.min(index, 4) * 70}ms` }}
     >
       <div className="mb-1.5 flex items-center justify-between gap-2">
         <h3 className="text-fg text-[17px] font-semibold">{p.name}</h3>
@@ -123,6 +125,7 @@ function ProjectCard({ p, index }: { p: Project; index: number }) {
         )}
       </div>
     </article>
+    </div>
   );
 }
 
@@ -165,75 +168,8 @@ export default function UiPortfolio() {
     };
   }, []);
 
-  // Eased (inertial) scrolling for mouse wheel + in-page nav clicks. Only on
-  // fine-pointer, motion-OK devices — touch keeps native momentum, and
-  // reduced-motion / keyboard scrolling stays instant.
-  useEffect(() => {
-    const root = scrollRef.current;
-    if (!root) return;
-    if (
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      !window.matchMedia("(pointer: fine)").matches
-    ) {
-      return; // native scroll
-    }
-
-    root.style.scrollBehavior = "auto"; // JS drives the easing
-    let target = root.scrollTop;
-    let raf = 0;
-    let running = false;
-    const maxScroll = () => root.scrollHeight - root.clientHeight;
-    const clamp = (v: number) => Math.max(0, Math.min(v, maxScroll()));
-
-    const tick = () => {
-      const current = root.scrollTop;
-      const diff = target - current;
-      if (Math.abs(diff) < 0.5) {
-        root.scrollTop = target;
-        running = false;
-        return;
-      }
-      root.scrollTop = current + diff * 0.15; // easing factor
-      raf = requestAnimationFrame(tick);
-    };
-    const start = () => {
-      if (!running) {
-        running = true;
-        raf = requestAnimationFrame(tick);
-      }
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey) return; // let pinch-zoom through
-      e.preventDefault();
-      if (!running) target = root.scrollTop; // resync after any native scroll
-      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? root.clientHeight : 1;
-      target = clamp(target + e.deltaY * unit);
-      start();
-    };
-
-    const onClick = (e: MouseEvent) => {
-      const link = (e.target as HTMLElement).closest?.('a[href^="#"]');
-      if (!link) return;
-      const id = (link.getAttribute("href") || "").slice(1);
-      const el = id ? root.querySelector<HTMLElement>(`#${CSS.escape(id)}`) : null;
-      if (!el) return;
-      e.preventDefault();
-      const top =
-        el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop;
-      target = clamp(top - 72); // offset for the sticky nav
-      start();
-    };
-
-    root.addEventListener("wheel", onWheel, { passive: false });
-    root.addEventListener("click", onClick);
-    return () => {
-      root.removeEventListener("wheel", onWheel);
-      root.removeEventListener("click", onClick);
-      cancelAnimationFrame(raf);
-      root.style.scrollBehavior = "";
-    };
-  }, []);
+  // Eased (inertial) wheel + nav-click scrolling (see useSmoothScroll).
+  useSmoothScroll(scrollRef);
 
   return (
     <div
@@ -306,7 +242,7 @@ export default function UiPortfolio() {
         {/* Experience */}
         <section id="experience" className="mt-24 scroll-mt-24">
           <SectionHeading n="02" title="Experience" />
-          <div className="max-w-4xl space-y-10 border-l border-border pl-6">
+          <div className="timeline relative max-w-4xl space-y-10 pl-6">
             {experience.map((r) => (
               <div key={r.slug} className="reveal relative">
                 <span className="absolute -left-[27px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-green bg-panel" />
@@ -343,14 +279,18 @@ export default function UiPortfolio() {
               <div key={g.label} className="reveal">
                 <div className="mb-3 text-[13px] text-cyan">{g.label}</div>
                 <div className="flex flex-wrap gap-2">
-                  {g.items.map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-md border border-border bg-elev px-2.5 py-1 text-[12px] text-dim"
-                    >
-                      {item}
-                    </span>
-                  ))}
+                  {g.items.map((item) => {
+                    const icon = skillIcon(item);
+                    return (
+                      <span
+                        key={item}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-border bg-elev px-2.5 py-1 text-[12px] text-dim"
+                      >
+                        {icon && <TechGlyph tech={icon} size={13} />}
+                        {item}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             ))}

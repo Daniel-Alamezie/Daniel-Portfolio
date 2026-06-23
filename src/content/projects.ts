@@ -28,6 +28,25 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: "portfolio",
+    name: "This Portfolio",
+    year: 2026,
+    tagline: "The terminal-style site you're looking at — a hybrid shell + visual view.",
+    status: "open-source",
+    link: "https://daniel-portfolio-black.vercel.app/",
+    repo: "https://github.com/Daniel-Alamezie/Daniel-Portfolio",
+    tech: ["nextjs", "react", "typescript", "tailwind"],
+    description: [
+      "The site you're on right now. A terminal-style portfolio with a real command shell (ls/cd/cat plus clickable folders) and a toggleable visual layout, so it works for engineers and recruiters alike.",
+      "Built as a fully static Next.js export — no backend, no database, no secrets — which keeps it safe to open-source. Content lives as plain data; security headers, email obfuscation, and CI are baked in.",
+    ],
+    highlights: [
+      "Designed a hybrid interface: a typed terminal and a visual Portfolio view that share a single content source.",
+      "Static export with a hardened CSP, obfuscated contact email, Dependabot, and GitHub Actions CI — open-source-safe by construction.",
+      "Polished UX: eased scrolling, scroll-reveal section animations, and an animated starfield backdrop.",
+    ],
+  },
+  {
     slug: "agentic-orchestration",
     name: "Agentic Orchestration",
     year: 2025,

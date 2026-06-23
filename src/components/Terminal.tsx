@@ -19,6 +19,7 @@ import {
   SkillsView,
 } from "./views";
 import type { Project, Role } from "@/content/types";
+import { useSmoothScroll } from "./useSmoothScroll";
 
 interface Block {
   id: number;
@@ -361,6 +362,9 @@ export default function Terminal() {
   const idRef = useRef(1);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Eased (inertial) wheel scrolling for the terminal output.
+  useSmoothScroll(scrollRef);
 
   /** Run a command, echoing the prompt line, and apply any cwd change. */
   function runCommand(raw: string, echo = true) {

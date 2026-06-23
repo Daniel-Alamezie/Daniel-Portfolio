@@ -130,6 +130,53 @@ body {
 }
 
 /*
+ * Experience timeline: a faint static track with a soft green light that
+ * drifts down it on a loop. Replaces the plain left border.
+ */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.timeline::after {
+  content: "";
+  position: absolute;
+  left: -0.5px;
+  width: 2px;
+  height: 64px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, transparent, var(--green), transparent);
+  filter: drop-shadow(0 0 4px var(--green));
+  opacity: 0;
+  animation: timelineFlow 4s ease-in-out infinite;
+}
+@keyframes timelineFlow {
+  0% {
+    top: -64px;
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  88% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .timeline::after {
+    display: none;
+  }
+}
+
+/*
  * Pulsing ring that nudges the visitor toward the Portfolio view toggle while
  * they're in the terminal. Subtle, and disabled for reduced-motion visitors.
  */
@@ -226,10 +273,10 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   [data-js="true"] .reveal {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(24px);
     transition:
-      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   }
   [data-js="true"] .reveal.is-visible {
     opacity: 1;

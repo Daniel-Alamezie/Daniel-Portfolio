@@ -2,50 +2,62 @@ import { TECH } from "@/lib/tech";
 import type { TechKey } from "@/content/types";
 
 /**
- * Monochrome tech chip. Uses a simple-icons SVG path where available, and a
- * text-mark for trademark-removed brands (C#, AWS, Azure, OpenAI) and SQL.
- * Everything renders in `currentColor` so it inherits the terminal palette.
+ * Just the icon for a tech: a full-colour brand SVG (via <img>), a monochrome
+ * simple-icons path, or a text-mark glyph. Reused by TechBadge and the Skills
+ * chips. <img> is used for brand SVGs so each file's gradient/mask ids stay
+ * scoped per-file (no collisions when an icon repeats).
  */
-export function TechBadge({ tech }: { tech: TechKey }) {
+export function TechGlyph({ tech, size = 14 }: { tech: TechKey; size?: number }) {
   const meta = TECH[tech];
   if (!meta) return null;
 
+  if (meta.src) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- intentional: per-file id scoping; next/image adds no value for tiny static svgs in a static export
+      <img
+        src={meta.src}
+        alt=""
+        width={size}
+        height={size}
+        loading="lazy"
+        decoding="async"
+        aria-hidden="true"
+        className="object-contain"
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+  if (meta.path) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        width={size - 1}
+        height={size - 1}
+        fill="currentColor"
+        aria-hidden="true"
+        className="text-fg"
+      >
+        <path d={meta.path} />
+      </svg>
+    );
+  }
+  return (
+    <span aria-hidden="true" className="font-semibold tracking-tight text-fg text-[11px]">
+      {meta.glyph}
+    </span>
+  );
+}
+
+/** Monochrome/brand tech chip: icon + label. */
+export function TechBadge({ tech }: { tech: TechKey }) {
+  const meta = TECH[tech];
+  if (!meta) return null;
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded border border-border bg-elev px-2 py-0.5 text-[12px] text-dim"
       title={meta.label}
     >
-      {meta.src ? (
-        // eslint-disable-next-line @next/next/no-img-element -- intentional: <img> scopes each SVG's gradient/mask ids per-file, avoiding id collisions when an icon repeats; next/image adds no value for tiny static svgs in a static export
-        <img
-          src={meta.src}
-          alt=""
-          width={14}
-          height={14}
-          loading="lazy"
-          decoding="async"
-          aria-hidden="true"
-          className="h-3.5 w-3.5 object-contain"
-        />
-      ) : meta.path ? (
-        <svg
-          viewBox="0 0 24 24"
-          width="13"
-          height="13"
-          fill="currentColor"
-          aria-hidden="true"
-          className="text-fg"
-        >
-          <path d={meta.path} />
-        </svg>
-      ) : (
-        <span
-          aria-hidden="true"
-          className="font-semibold tracking-tight text-fg text-[11px]"
-        >
-          {meta.glyph}
-        </span>
-      )}
+      <TechGlyph tech={tech} />
       <span>{meta.label}</span>
     </span>
   );
