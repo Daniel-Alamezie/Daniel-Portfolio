@@ -1,0 +1,238 @@
+@import "tailwindcss";
+
+/*
+ * Terminal theme — dark-first, monospace, calm.
+ * Colours are tuned to read as a real, well-configured terminal rather than a
+ * neon toy. One accent (green) for "you are here", one for links (cyan).
+ */
+:root {
+  --bg: #0a0e14;
+  --bg-panel: #0d1117;
+  --bg-elev: #161b22;
+  --border: #21262d;
+  --fg: #c9d1d9;
+  --fg-dim: #8b949e;
+  --fg-faint: #6e7681;
+  --green: #3fb950;
+  --cyan: #56b6c2;
+  --magenta: #d2a8ff;
+  --yellow: #e3b341;
+  --red: #f85149;
+  --selection: rgba(86, 182, 194, 0.25);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--bg-panel);
+  --color-elev: var(--bg-elev);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-dim: var(--fg-dim);
+  --color-faint: var(--fg-faint);
+  --color-green: var(--green);
+  --color-cyan: var(--cyan);
+  --color-magenta: var(--magenta);
+  --color-yellow: var(--yellow);
+  --color-red: var(--red);
+  --font-mono: var(--font-geist-mono), ui-monospace, "Cascadia Code", "Fira Code", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--selection);
+}
+
+/* Subtle ambient gradient so the black isn't flat. */
+.app-bg {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(63, 185, 80, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 100% 100%, rgba(86, 182, 194, 0.05), transparent 60%),
+    var(--bg);
+}
+
+/* Faint CRT scanlines — very low opacity, decorative only. */
+.crt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.015) 0px,
+    rgba(255, 255, 255, 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  border-radius: inherit;
+}
+
+/* Blinking block cursor for the active prompt. */
+.cursor {
+  display: inline-block;
+  width: 0.6ch;
+  height: 1.05em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--green);
+  animation: blink 1.05s steps(1) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none; }
+}
+
+/* Custom scrollbar to match the shell. */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.scroll-thin::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+  border: 2px solid var(--bg-panel);
+}
+.scroll-thin::-webkit-scrollbar-track { background: transparent; }
+
+/* Inline terminal link. */
+.tlink {
+  color: var(--cyan);
+  text-decoration: none;
+  border-bottom: 1px dotted color-mix(in srgb, var(--cyan) 50%, transparent);
+}
+.tlink:hover { border-bottom-style: solid; }
+
+/* Focus ring that fits the theme (accessibility). */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/*
+ * Pulsing ring that nudges the visitor toward the Portfolio view toggle while
+ * they're in the terminal. Subtle, and disabled for reduced-motion visitors.
+ */
+.portfolio-hint::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 7px;
+  border: 1px solid var(--cyan);
+  opacity: 0;
+  pointer-events: none;
+  animation: hintPulse 2.6s ease-out infinite;
+}
+@keyframes hintPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  35% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-hint::after {
+    animation: none;
+  }
+}
+
+/*
+ * Animated shooting stars in the backdrop, behind the floating window.
+ * Positions/timings are randomized per-star in JS (ShootingStars.tsx) and fed
+ * in as CSS custom properties. Hidden entirely for reduced-motion visitors.
+ */
+.stars {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+.star {
+  position: absolute;
+  height: 1px;
+  width: var(--len, 120px);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(190, 225, 255, 0.85));
+  opacity: 0;
+  transform-origin: right center;
+  filter: drop-shadow(0 0 3px rgba(140, 200, 255, 0.5));
+  animation: shoot var(--dur, 6s) linear var(--delay, 0s) infinite;
+}
+.star::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -1px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #eaf4ff;
+  box-shadow: 0 0 6px 1px rgba(190, 225, 255, 0.8);
+}
+@keyframes shoot {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--angle, 18deg)) translateX(0);
+  }
+  8% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle, 18deg)) translateX(var(--travel, 700px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stars {
+    display: none;
+  }
+}
+
+/*
+ * Scroll-reveal. Elements start hidden and ease in as they enter the viewport.
+ * The hidden state is gated on BOTH `data-js="true"` (set by JS after mount, so
+ * no-JS visitors always see content) AND prefers-reduced-motion: no-preference
+ * (so reduced-motion visitors see everything immediately, no movement).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-js="true"] .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-js="true"] .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
