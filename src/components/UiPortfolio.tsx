@@ -59,6 +59,7 @@ function SectionHeading({ n, title }: { n: string; title: string }) {
 
 function ProjectCard({ p, index }: { p: Project; index: number }) {
   const status = STATUS[p.status];
+  const primaryUrl = p.link ?? p.repo;
   return (
     <div className="reveal h-full" style={{ transitionDelay: `${Math.min(index, 4) * 70}ms` }}>
     <article
@@ -67,7 +68,24 @@ function ProjectCard({ p, index }: { p: Project; index: number }) {
       }`}
     >
       <div className="mb-1.5 flex items-center justify-between gap-2">
-        <h3 className="text-fg text-[17px] font-semibold">{p.name}</h3>
+        {primaryUrl ? (
+          <a
+            href={primaryUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group/title inline-flex items-center gap-1.5 text-fg text-[17px] font-semibold transition-colors hover:text-cyan"
+          >
+            <span className="underline-offset-4 group-hover/title:underline">{p.name}</span>
+            <span
+              aria-hidden="true"
+              className="-translate-x-1 text-cyan opacity-0 transition-all group-hover/title:translate-x-0 group-hover/title:opacity-100"
+            >
+              ↗
+            </span>
+          </a>
+        ) : (
+          <h3 className="text-fg text-[17px] font-semibold">{p.name}</h3>
+        )}
         <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[11px] ${status.cls}`}>
           {status.text}
         </span>
@@ -94,10 +112,15 @@ function ProjectCard({ p, index }: { p: Project; index: number }) {
                 href={p.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-elev px-3 py-1.5 text-[13px] text-cyan hover:border-cyan/60"
+                className="group/cta inline-flex items-center gap-1.5 rounded-md border border-cyan/50 bg-cyan/10 px-3.5 py-2 text-[13px] font-medium text-cyan transition-colors hover:border-cyan hover:bg-cyan/20"
               >
-                <span aria-hidden="true">↗</span>
-                {p.link.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                Visit site
+                <span
+                  aria-hidden="true"
+                  className="transition-transform group-hover/cta:-translate-y-0.5 group-hover/cta:translate-x-0.5"
+                >
+                  ↗
+                </span>
               </a>
             )}
             {p.repo && (
@@ -105,9 +128,11 @@ function ProjectCard({ p, index }: { p: Project; index: number }) {
                 href={p.repo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-elev px-3 py-1.5 text-[13px] text-dim hover:border-cyan/60"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-elev px-3.5 py-2 text-[13px] text-fg transition-colors hover:border-cyan/60 hover:text-cyan"
               >
-                source
+                {/* eslint-disable-next-line @next/next/no-img-element -- static brand svg in a static export */}
+                <img src="/icons/github.svg" alt="" width={14} height={14} aria-hidden="true" className="h-3.5 w-3.5 object-contain" />
+                Source
               </a>
             )}
             {p.links?.map((l) => (
@@ -116,9 +141,10 @@ function ProjectCard({ p, index }: { p: Project; index: number }) {
                 href={l.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-elev px-3 py-1.5 text-[13px] text-dim hover:border-cyan/60"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-elev px-3.5 py-2 text-[13px] text-fg transition-colors hover:border-cyan/60 hover:text-cyan"
               >
                 {l.label}
+                <span aria-hidden="true">↗</span>
               </a>
             ))}
           </div>
