@@ -6,6 +6,9 @@ import {
   siGithubactions,
   siGraphql,
   siPython,
+  siTerraform,
+  siServerless,
+  siVite,
 } from "simple-icons";
 import type { TechKey } from "@/content/types";
 
@@ -57,11 +60,17 @@ export const TECH: Record<TechKey, TechMeta> = {
   githubactions: { label: "GitHub Actions", path: siGithubactions.path },
   graphql: { label: "GraphQL", path: siGraphql.path },
   python: { label: "Python", path: siPython.path },
+  terraform: { label: "Terraform", path: siTerraform.path },
+  serverless: { label: "Serverless Framework", path: siServerless.path },
+  vite: { label: "Vite", path: siVite.path },
 
-  // No icon at all — text-marks.
+  // No icon at all — text-marks. AWS service marks aren't in simple-icons
+  // (they were removed over trademark policy), so these render as glyphs.
   sql: { label: "SQL", glyph: "SQL" },
   semantickernel: { label: "Semantic Kernel", glyph: "SK" },
   socketio: { label: "Socket.io", glyph: "IO" },
+  lambda: { label: "AWS Lambda", glyph: "λ" },
+  dynamodb: { label: "DynamoDB", glyph: "DDB" },
 };
 
 /**
@@ -82,6 +91,10 @@ const SKILL_ICON: Record<string, TechKey> = {
   "Microsoft Semantic Kernel": "semantickernel",
   Azure: "azure",
   AWS: "aws",
+  "AWS Lambda": "lambda",
+  DynamoDB: "dynamodb",
+  "Serverless Framework": "serverless",
+  Terraform: "terraform",
   Kubernetes: "kubernetes",
   "GitHub Actions CI/CD": "githubactions",
   PostgreSQL: "postgresql",
