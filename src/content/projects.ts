@@ -33,7 +33,7 @@ export const projects: Project[] = [
     year: 2026,
     tagline: "Real-time 1v1 typing duel — finish a word, forge a blade, throw it at your opponent.",
     status: "open-source",
-    link: null,
+    link: "https://keymania-web.vercel.app/",
     repo: "https://github.com/Daniel-Alamezie/keymania-web",
     tech: ["nextjs", "react", "typescript", "aws", "lambda", "dynamodb", "serverless", "githubactions"],
     description: [
@@ -55,7 +55,7 @@ export const projects: Project[] = [
     year: 2026,
     tagline: "Visual systems-design playground — sketch cloud architectures on a drag-and-drop canvas.",
     status: "open-source",
-    link: null,
+    link: "https://kube-sandbox.vercel.app/",
     repo: "https://github.com/Daniel-Alamezie/Kube-Sandbox",
     tech: ["react", "typescript", "vite"],
     description: [
